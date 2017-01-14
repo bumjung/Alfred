@@ -1,0 +1,27 @@
+{
+  "name": "Alfred",
+  "version": "1.0.0",
+  "description": "Personal Messenger Bot Updates",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "lint": "jshint --exclude node_modules .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "config": "^1.20.4",
+    "cron": "^1.2.1",
+    "ejs": "^2.4.2",
+    "express": "^4.13.4",
+    "q": "^1.4.1",
+    "request": "^2.72.0",
+    "underscore": "^1.8.3"
+  },
+  "engines": {
+    "node": "~4.1.2"
+  }
+}

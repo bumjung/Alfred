@@ -1,0 +1,3 @@
+config/default.json
+.DS_*
+node_modules
