@@ -15,11 +15,13 @@ app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
 app.set('constants', constants);
 
-var WeatherController = require('./app/controller/WeatherController');
 var Alfred = require('./app/alfred');
+var WeatherController = require('./app/controller/WeatherController');
+var ExchangeController = require('./app/controller/ExchangeController');
 
 var weatherController = new WeatherController(constants);
-var alfred = new Alfred(app, weatherController);
+var exchangeController = new ExchangeController(constants);
+var alfred = new Alfred(app, weatherController, exchangeController);
 
 var routes = require('./app/routes')(app, alfred);
 

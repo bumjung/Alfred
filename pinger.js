@@ -15,6 +15,7 @@ function schedule(pattern, cb, stop){
 function monitor(pattern, site, cb, stop){
 	schedule(pattern, function() {
 		https.get(site);
+  });
 };
 
 var cb = function(){};

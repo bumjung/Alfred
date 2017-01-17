@@ -6,9 +6,10 @@ const
   _ = require('underscore'),
   request = require('request');
 
-var Alfred = function (app, weatherController) {
+var Alfred = function (app, weatherController, exchangeController) {
   this.app = app;
   this.weatherController = weatherController;
+  this.exchangeController = exchangeController;
   this.constants = app.get('constants');
 };
 
@@ -50,6 +51,9 @@ _.extend(Alfred.prototype, {
         case 'weather':
           this.sendWeatherMessage(senderID);
           break;
+        case 'exchange':
+          this.sendExchangeMessage(senderID);
+          break;
         case 'who is the real batman':
           this.sendTextMessage(senderID, 'You are the real Batman');
           break;
@@ -83,20 +87,36 @@ _.extend(Alfred.prototype, {
    */
   sendBatchMessage: function(recipientId) {
     var self = this;
+    var promises = [];
 
-    // TODO: batch different data
-
-    this.weatherController.generateWeatherElement().then(function(weatherElement) {
-      var messageData = self.createMessageData(recipientId, [weatherElement]);
-
+    promises.push(
+      this.weatherController.generateElement(),
+      this.exchangeController.generateElement()
+    );
+    return Q.allSettled(promises).then(function(content) {
+      var elements = _.map(content, function(data) {
+        if(data['state'] === 'fulfilled') {
+          return data['value'];
+        }
+      });
+      var messageData = self.createMessageData(recipientId, elements);
       self.callSendAPI(messageData);
     });
   },
 
   sendWeatherMessage: function(recipientId) {
     var self = this;
-    this.weatherController.generateWeatherElement().then(function(weatherElement) {
-      var messageData = self.createMessageData(recipientId, [weatherElement]);
+    this.weatherController.generateElement().then(function(element) {
+      var messageData = self.createMessageData(recipientId, [element]);
+
+      self.callSendAPI(messageData);
+    });
+  },
+
+  sendExchangeMessage: function(recipientId) {
+    var self = this;
+    this.exchangeController.generateElement().then(function(element) {
+      var messageData = self.createMessageData(recipientId, [element]);
 
       self.callSendAPI(messageData);
     });

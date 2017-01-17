@@ -6,15 +6,13 @@ const
   _ = require('underscore'),
   request = require('request');
 
-var BaseController = require('./BaseController');
-
 var WeatherController = function(constants) {
   this.constants = constants;
 };
 
-WeatherController.prototype = _.extend(BaseController.prototype, {
-  generateWeatherElement: function() {
-    return this.getWeatherData().then(function(data) {
+_.extend(WeatherController.prototype, {
+  generateElement: function() {
+    return this.getData().then(function(data) {
       var data = JSON.parse(data);
 
       var location = data.location.name + ", " + data.location.region;
@@ -37,7 +35,7 @@ WeatherController.prototype = _.extend(BaseController.prototype, {
     });
   },
 
-  getWeatherData: function() {
+  getData: function() {
     var deferred = Q.defer();
 
     const weatherAPIKey = this.constants.WEATHER_API_KEY;
@@ -46,9 +44,7 @@ WeatherController.prototype = _.extend(BaseController.prototype, {
       uri: 'http://api.apixu.com/v1/current.json?key='+weatherAPIKey+'&q=waterloo',
       method: 'GET',
     }, function(error, response, body) {
-      console.log(body);
       if (!error && response.statusCode == 200) {
-        console.log('resolve');
         deferred.resolve(body);
       } else {
         throw error;
